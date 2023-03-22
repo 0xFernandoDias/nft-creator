@@ -81,7 +81,7 @@ const Home: NextPage = () => {
 					""
 				)}
 			</div>
-			{address && (
+			{address ? (
 				<>
 					<input
 						type="text"
@@ -106,6 +106,8 @@ const Home: NextPage = () => {
 						)
 					})}
 				</>
+			) : (
+				<h1>Connect to see your NFT collection on Goerli network</h1>
 			)}
 		</div>
 	)
