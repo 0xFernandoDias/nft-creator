@@ -3,9 +3,11 @@ import {
 	useAddress,
 	useDisconnect,
 	useMetamask,
+	useNetwork,
+	useNetworkMismatch,
 	useSDK,
 } from "@thirdweb-dev/react"
-import { ContractType, ContractWithMetadata } from "@thirdweb-dev/sdk"
+import { ChainId, ContractType, ContractWithMetadata } from "@thirdweb-dev/sdk"
 import type { NextPage } from "next"
 import { useEffect, useState } from "react"
 import NFTCollection from "../components/NFTCollection"
@@ -18,6 +20,14 @@ const Home: NextPage = () => {
 	const connectWithMetamask = useMetamask()
 	const disconnectWallet = useDisconnect()
 	const sdk = useSDK()
+	const [, switchNetwork] = useNetwork()
+	const isWrongNetwork = useNetworkMismatch()
+
+	useEffect(() => {
+		if (isWrongNetwork && switchNetwork) {
+			switchNetwork(ChainId.Goerli)
+		}
+	}, [isWrongNetwork, switchNetwork, address])
 
 	useEffect(() => {
 		if (!address || !sdk) return
@@ -60,7 +70,18 @@ const Home: NextPage = () => {
 
 	return (
 		<div>
-			{address ? (
+			<div style={{ width: "250px" }}>
+				<ConnectWallet
+					accentColor={isWrongNetwork ? "#c4c4c4" : "#f213a4"}
+					colorMode="light"
+				/>
+				{isWrongNetwork ? (
+					<p>Please switch your network to the Goerli network</p>
+				) : (
+					""
+				)}
+			</div>
+			{address && (
 				<>
 					<input
 						type="text"
@@ -79,20 +100,12 @@ const Home: NextPage = () => {
 
 					<h2>My NFT Collections</h2>
 
-					<button type="button" onClick={disconnectWallet}>
-						Disconnect wallet
-					</button>
-
 					{collections?.map((collection) => {
 						return (
 							<NFTCollection collection={collection} key={collection.address} />
 						)
 					})}
 				</>
-			) : (
-				<button type="button" onClick={connectWithMetamask}>
-					Connect with Metamask
-				</button>
 			)}
 		</div>
 	)
