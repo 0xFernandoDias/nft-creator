@@ -1,3 +1,5 @@
+![](brave_SOLvDt6bQb.png)
+
 ## Getting Started
 
 Create a project using this example:
